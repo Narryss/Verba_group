@@ -22,19 +22,20 @@ class TvoeSpiderSpider(CrawlSpider):
             yield response.follow(link, callback=self.parse_item)
 
         page_numbers = response.xpath('//a[@class="pagination__list-item"]/text()').getall()
-
-        if page_numbers:
-            try:
-                last_page = int(page_numbers[-1])
-            except ValueError:
-                last_page = 1
-        else:
+        try:
+            last_page = int(page_numbers[-1]) if page_numbers else 1
+        except ValueError:
             last_page = 1
 
         base_url = response.url.split('?')[0]
         for page in range(2, last_page + 1):
             page_url = f"{base_url}?page={page}"
-            yield response.follow(page_url, callback=self.parse_category)
+            yield response.follow(page_url, callback=self.parse_page)
+
+     def parse_page(self, response):
+        product_links = response.xpath('//component[contains(@class, "product__title")]/@link').getall()
+        for link in product_links:
+            yield response.follow(link, callback=self.parse_item)   
 
     def parse_item(self, response):
         item = TvoeItem()
