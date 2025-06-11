@@ -18,12 +18,13 @@ class ExcelExportPipeline:
         self.sheet.append(headers)
 
     def process_item(self, item, spider):
+        breadcrumbs_str = ' / '.join(item.get('breadcrumbs', []))
         attributes_str = '; '.join([f"{attr['name']}: {attr['value']}" for attr in item.get('attributes', [])])
         images_str = '; '.join(item.get('images', []))
 
         row = [
             item.get("url"),
-            item.get("breadcrumbs"),
+            breadcrumbs_str,
             item.get("name"),
             item.get("description"),
             item.get("current_price"),
