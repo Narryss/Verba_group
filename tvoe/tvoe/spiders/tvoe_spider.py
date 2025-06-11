@@ -47,7 +47,8 @@ class TvoeSpiderSpider(CrawlSpider):
             breadcrumb_text = breadcrumb.xpath('.//span[@class="breadcrumbs__item-text"]/text()').get()
             if breadcrumb_text:
                 breadcrumbs.append(breadcrumb_text.strip())
-        item['breadcrumbs'] = ' / '.join(breadcrumbs)
+        unique_breadcrumbs = list(dict.fromkeys(breadcrumbs))
+        item['breadcrumbs'] = unique_breadcrumbs
 
         item['name'] = response.xpath('.//div[@class="product-detail"]'
                                       '//h1[@class="product-detail__title"]/text()').get()
