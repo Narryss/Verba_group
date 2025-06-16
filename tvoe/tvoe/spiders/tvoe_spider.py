@@ -8,6 +8,8 @@ class TvoeSpiderSpider(CrawlSpider):
     start_urls = ["https://tvoe.ru/"]
 
     def parse_start_url(self, response):
+        self.logger.info("Парсинг стартовой страницы: %s", response.url)
+        
         men_link = response.xpath('.//a[contains(text(), "Мужчинам")]/@href').get()
         if men_link:
             yield response.follow(men_link, callback=self.parse_category)
@@ -17,6 +19,8 @@ class TvoeSpiderSpider(CrawlSpider):
             yield response.follow(women_link, callback=self.parse_category)
 
     def parse_category(self, response):
+        self.logger.info("Парсинг категории: %s", response.url)
+        
         product_links = response.xpath('//component[contains(@class, "product__title")]/@link').getall()
         for link in product_links:
             yield response.follow(link, callback=self.parse_item)
@@ -33,6 +37,8 @@ class TvoeSpiderSpider(CrawlSpider):
             yield response.follow(page_url, callback=self.parse_page)
 
      def parse_page(self, response):
+        self.logger.info("Парсинг страницы пагинации: %s", response.url)
+         
         product_links = response.xpath('//component[contains(@class, "product__title")]/@link').getall()
         for link in product_links:
             yield response.follow(link, callback=self.parse_item)   
